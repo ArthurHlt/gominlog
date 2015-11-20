@@ -104,7 +104,7 @@ func (this *MinLog) logMessage(typeLog string, colorFg ct.Color, colorBg ct.Colo
 		panic("Firt argument should be a string")
 	}
 	if len(args) > 1 {
-		newArgs := args[0:]
+		newArgs := args[1:]
 		msg += typeLog + ": " + fmt.Sprintf(text, newArgs...)
 	}else {
 		msg += typeLog + ": " + text

@@ -20,7 +20,7 @@ var _ = Describe("Gominlog", func() {
 		It("should log inside stdout with flag log.Lshortfile | log.Ldate | log.Ltime and level to all", func() {
 			logger.Debug("test debuglevel")
 			Expect(buffer).Should(gbytes.Say("/gominlog.test/gominlog_test.go:[0-9]+ DEBUG: test debuglevel"))
-			logger.Error("test errorlevel")
+			logger.Error("test %s", "errorlevel")
 			Expect(buffer).Should(gbytes.Say("ERROR: test errorlevel"))
 			logger.Warning("test warninglevel")
 			Expect(buffer).Should(gbytes.Say("WARNING: test warninglevel"))
