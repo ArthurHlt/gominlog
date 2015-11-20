@@ -1,0 +1,10 @@
+{
+	"ImportPath": "github.com/ArthurHlt/gominlog",
+	"GoVersion": "go1.5.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/daviddengcn/go-colortext",
+			"Rev": "3b18c8575a432453d41fdafb340099fff5bba2f7"
+		}
+	]
+}
