@@ -4,6 +4,10 @@ A minimal logger for golang with color in terminal and level.
 It will also override the flag `log.Lshortfile`, it will give you the path of the current file which is logged without unnecessary sub folder, but for this you need to set the `packageName` value.
 this value should be the same name than your root folder project name.
 
+## Requirement
+
+**Go version**: >= 1.5
+
 ## Getting start
 
 ```go
