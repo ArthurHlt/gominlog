@@ -24,7 +24,7 @@ minlog.Debug("test debuglevel")
 minlog.Error("test errorlevel")
 minlog.Warning("test warninglevel")
 minlog.Severe("test severelevel")
-minlog.Info("test infolevel")
+minlog.Info("test %s", "infolevel") // you can also pass values like with fmt.Sprintf
 
 // To remove color:
 minlog.WithColor(false)
