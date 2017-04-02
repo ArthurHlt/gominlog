@@ -152,7 +152,7 @@ var _ = Describe("Gominlog", func() {
 			buffer = gbytes.NewBuffer()
 			flags := log.Llongfile | log.Ltime | log.Ldate
 			loggerLog := log.New(buffer, "", flags)
-			logger = NewMinLogWithLogger("gominlog", Linfo, true, loggerLog)
+			logger = NewMinLogWithLogger("gominlog", Linfo, false, loggerLog)
 		})
 		It("should give the file path by delimiting with packageName", func() {
 			logger.Info("test infolevel")
@@ -162,7 +162,6 @@ var _ = Describe("Gominlog", func() {
 			Expect(buffer).ShouldNot(gbytes.Say("DEBUG: test debuglevel"))
 
 			Expect(logger.GetLevel()).To(Equal(Linfo))
-			Expect(logger.IsColorized()).To(BeTrue())
 			Expect(logger.GetLogger().Flags()).To(Equal(log.Llongfile | log.Ltime | log.Ldate))
 		})
 	})

@@ -5,11 +5,12 @@ import (
 	"os"
 	"fmt"
 	"runtime"
-	"github.com/daviddengcn/go-colortext"
+	"github.com/fatih/color"
 	"regexp"
 	"strings"
 	"io"
 )
+
 type Level int
 
 const (
@@ -53,6 +54,14 @@ func NewMinLog(appName string, level Level, withColor bool, flag int) *MinLog {
 	minLog.level = level
 	return minLog
 }
+func NewMinLogWithWriter(appName string, level Level, withColor bool, flag int, logWriter io.Writer) *MinLog {
+	minLog := &MinLog{}
+	minLog.log = log.New(logWriter, "", flag)
+	minLog.isColorized = withColor
+	minLog.packageName = appName
+	minLog.level = level
+	return minLog
+}
 func NewMinLogWithLogger(packageName string, level Level, withColor bool, logger *log.Logger) *MinLog {
 	minLog := &MinLog{}
 	minLog.log = logger
@@ -88,10 +97,11 @@ func (this *MinLog) IsColorized() bool {
 	return this.isColorized
 }
 func (this *MinLog) GetLogger() *log.Logger {
+
 	return this.log
 }
 
-func (this *MinLog) logMessage(typeLog string, colorFg ct.Color, colorBg ct.Color, args ...interface{}) {
+func (this *MinLog) logMessage(typeLog string, colorFg color.Attribute, colorBg color.Attribute, args ...interface{}) {
 	var text string
 	msg := ""
 	flags := this.log.Flags()
@@ -106,58 +116,53 @@ func (this *MinLog) logMessage(typeLog string, colorFg ct.Color, colorBg ct.Colo
 	if len(args) > 1 {
 		newArgs := args[1:]
 		msg += typeLog + ": " + fmt.Sprintf(text, newArgs...)
-	}else {
+	} else {
 		msg += typeLog + ": " + text
 	}
 	this.writeMsgInLogger(msg, colorFg, colorBg)
 	this.log.SetFlags(flags)
 }
-func (this *MinLog) writeMsgInLogger(msg string, colorFg ct.Color, colorBg ct.Color) {
-	if this.isColorized && colorFg > 0 {
-		ct.Foreground(colorFg, false)
-	}
-	if this.isColorized && colorBg > 0 {
-		ct.ChangeColor(colorFg, false, colorBg, false)
+func (this *MinLog) writeMsgInLogger(msg string, colorFg color.Attribute, colorBg color.Attribute) {
+	if this.isColorized && int(colorBg) == 0 {
+		msg = color.New(colorFg).Sprint(msg)
+	} else if this.isColorized {
+		msg = color.New(colorFg, colorBg).Sprint(msg)
 	}
 	this.log.Print(msg)
-	if this.isColorized {
-		ct.ResetColor()
-	}
 }
 func (this *MinLog) Error(args ...interface{}) {
 	if this.level > Lerror {
 		return
 	}
-	this.logMessage("ERROR", ct.Red, 0, args...)
+	this.logMessage("ERROR", color.FgRed, 0, args...)
 }
 
 func (this *MinLog) Severe(args ...interface{}) {
 	if this.level > Lsevere {
 		return
 	}
-	this.logMessage("SEVERE", ct.Red, ct.Yellow, args...)
+	this.logMessage("SEVERE", color.FgRed, color.BgYellow, args...)
 }
 
 func (this *MinLog) Debug(args ...interface{}) {
 	if this.level > Ldebug {
 		return
 	}
-	this.logMessage("DEBUG", ct.Blue, 0, args...)
+	this.logMessage("DEBUG", color.FgBlue, 0, args...)
 }
-
 
 func (this *MinLog) Info(args ...interface{}) {
 	if this.level > Linfo {
 		return
 	}
-	this.logMessage("INFO", ct.Cyan, 0, args...)
+	this.logMessage("INFO", color.FgCyan, 0, args...)
 }
 
 func (this *MinLog) Warning(args ...interface{}) {
 	if this.level > Lwarning {
 		return
 	}
-	this.logMessage("WARNING", ct.Yellow, 0, args...)
+	this.logMessage("WARNING", color.FgYellow, 0, args...)
 }
 func (this *MinLog) trace() string {
 	var shortFile string
@@ -177,7 +182,7 @@ func (this *MinLog) trace() string {
 	if len(subMatch) < 2 {
 		fileSplit := strings.Split(file, "/")
 		shortFile = fileSplit[len(fileSplit) - 1]
-	}else {
+	} else {
 		shortFile = subMatch[1]
 	}
 
